@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}View Service{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Service Details</h3>
+    <hr>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Service Name: </h5>
+            <p>{{ service.name }}</p>
+        </div>
+        <div class="col-md-6">
+            <h5>Base Price: </h5>
+            <p>{{ service.price }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h5>Description: </h5>
+            <p>{{ service.description }}</p>
+        </div>
+    </div>
+
+    <hr>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+</div>
+{% endblock %}

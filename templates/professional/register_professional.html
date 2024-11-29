@@ -5,22 +5,42 @@
 {% block content %}
 <div class="mt-5">
     <h2 class="text-center">Service Professional Signup</h2>
+
+    <!-- Flash messages section -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashed-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
     <form method="POST" action="/register/professional" class="mt-4" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="username" required>
+        </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email ID</label>
             <input type="email" name="email" class="form-control" id="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="phone_number" class="form-label">Phone Number</label>
+            <input type="text" name="phone_number" class="form-control" id="phone_number" required>
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" name="password" class="form-control" id="password" required>
         </div>
         <div class="mb-3">
-            <label for="fullname" class="form-label">Full Name</label>
-            <input type="text" name="fullname" class="form-control" id="fullname" required>
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <input type="password" name="confirm_password" class="form-control" id="confirm_password" required>
         </div>
         <div class="mb-3">
-            <label for="service_name" class="form-label">Service Name</label>
-            <select name="service_name" class="form-select" id="service_name" required>
+            <label for="service_type" class="form-label">Service Type</label>
+            <select name="service_type" class="form-select" id="service_type" required>
                 <option value="Plumbing">Plumbing</option>
                 <option value="Electrician">Electrician</option>
                 <option value="Cleaning">Cleaning</option>
@@ -29,19 +49,23 @@
         </div>
         <div class="mb-3">
             <label for="experience" class="form-label">Experience (in years)</label>
-            <input type="number" name="experience" class="form-control" id="experience" required>
+            <input type="number" name="experience" class="form-control" id="experience" step="0.1" required>
         </div>
         <div class="mb-3">
-            <label for="documents" class="form-label">Attach Documents (PDF)</label>
+            <label for="documents" class="form-label">Upload Resume (PDF)</label>
             <input type="file" name="documents" class="form-control" id="documents" accept="application/pdf" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Professional Description</label>
+            <textarea name="description" class="form-control" id="description" placeholder="Write about your skills or experience" required></textarea>
         </div>
         <div class="mb-3">
             <label for="address" class="form-label">Address</label>
             <textarea name="address" class="form-control" id="address" required></textarea>
         </div>
         <div class="mb-3">
-            <label for="pincode" class="form-label">Pin Code</label>
-            <input type="text" name="pincode" class="form-control" id="pincode" required>
+            <label for="pin_code" class="form-label">Pin Code</label>
+            <input type="text" name="pin_code" class="form-control" id="pin_code" required>
         </div>
         <button type="submit" class="btn btn-primary w-100">Register</button>
     </form>

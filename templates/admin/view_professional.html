@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}View Professional{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Professional Details</h3>
+    <hr>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Name: </h5>
+            <p>{{ professional.user_ref.username }}</p>
+        </div>
+        <div class="col-md-6">
+            <h5>Service Type: </h5>
+            <p>{{ professional.service_type }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Experience: </h5>
+            <p>{{ professional.experience }} years</p>
+        </div>
+        <div class="col-md-6">
+            <h5>Rating: </h5>
+            <p>{{ professional.rating }} stars</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Address: </h5>
+            <p>{{ professional.address }}</p>
+        </div>
+        <div class="col-md-6">
+            <h5>Pin Code: </h5>
+            <p>{{ professional.pin_code }}</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h5>Description: </h5>
+            <p>{{ professional.description }}</p>
+        </div>
+    </div>
+
+    <hr>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+</div>
+{% endblock %}

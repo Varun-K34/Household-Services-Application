@@ -3,69 +3,185 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
+
+<!-- Flash Message Section -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    <div class="alert-container">
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endwith %}
+
 <div class="mt-5">
-    <h2 class="text-center">Admin Dashboard</h2>
+    <!-- Top Bar Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light border">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Welcome to Admin</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <!-- Home Link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Home</a>
+                </li>
+                <!-- Search Button -->
+                <li class="nav-item">
+                    <form class="d-flex" method="GET" action="{{ url_for('admin_search') }}">
+                        <button class="nav-link btn btn-link" type="submit">Search</button>
+                    </form>
+                </li>
+                <!-- Summary Link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Summary</a>
+                </li>
+                <!-- Logout Link -->
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-    <h3 class="mt-4">Manage Users</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
-                <td>{{ 'Active' if user.is_active else 'Blocked' }}</td>
-                <td>
-                    {% if user.role == 'professional' %}
-                    <form method="POST" action="{{ url_for('approve_professional', user_id=user.id) }}" style="display:inline;">
-                        <button type="submit" class="btn btn-success">Approve</button>
-                    </form>
-                    {% endif %}
-                    <form method="POST" action="{{ url_for('block_user', user_id=user.id) }}" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Block</button>
-                    </form>
-                    <form method="POST" action="{{ url_for('unblock_user', user_id=user.id) }}" style="display:inline;">
-                        <button type="submit" class="btn btn-warning">Unblock</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
-    <h3 class="mt-4">Manage Services</h3>
-    <a href="{{ url_for('add_service') }}" class="btn btn-primary mb-3">Add New Service</a>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Service Name</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for service in services %}
-            <tr>
-                <td>{{ service.name }}</td>
-                <td>{{ service.description }}</td>
-                <td>
-                    <a href="{{ url_for('edit_service', service_id=service.id) }}" class="btn btn-warning">Edit</a>
-                    <form method="POST" action="{{ url_for('delete_service', service_id=service.id) }}" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mt-4" id="adminDashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="true">
+                Services
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="professionals-tab" data-bs-toggle="tab" data-bs-target="#professionals" type="button" role="tab" aria-controls="professionals" aria-selected="false">
+                Professionals
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="service-requests-tab" data-bs-toggle="tab" data-bs-target="#service-requests" type="button" role="tab" aria-controls="service-requests" aria-selected="false">
+                Service Requests
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-3" id="adminDashboardTabsContent">
+        <!-- Services Tab -->
+        <div class="tab-pane fade show active" id="services" role="tabpanel" aria-labelledby="services-tab">
+            <h3 class="mt-3">Services</h3>
+            <a href="{{ url_for('add_service') }}" class="btn btn-primary mb-3">+ New Service</a>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Service Name</th>
+                        <th>Base Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in services %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('view_service', service_id=service.id) }}">
+                                {{ service.id }}
+                            </a>
+                        </td>
+                        <td>{{ service.name }}</td>
+                        <td>{{ service.price }}</td>
+                        <td>
+                            <a href="{{ url_for('edit_service', service_id=service.id) }}" class="btn btn-warning">Edit</a>
+                            <form method="POST" action="{{ url_for('delete_service', service_id=service.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Professionals Tab -->
+        <div class="tab-pane fade" id="professionals" role="tabpanel" aria-labelledby="professionals-tab">
+            <h3 class="mt-3">Professionals</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Experience (Years)</th>
+                        <th>Service Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for professional in professionals %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('view_professional', professional_id=professional.id) }}">
+                                {{ professional.id }}
+                            </a>
+                        </td>
+                        <td>{{ professional.name }}</td>
+                        <td>{{ professional.experience }}</td>
+                        <td>{{ professional.service_ref.name }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('approve_professional', professional_id=professional.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-success">Approve</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('reject_professional', professional_id=professional.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Service Requests Tab -->
+        <div class="tab-pane fade" id="service-requests" role="tabpanel" aria-labelledby="service-requests-tab">
+            <h3 class="mt-3">Service Requests</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Assigned Professional (if any)</th>
+                        <th>Requested Date</th>
+                        <th>Status (R/A/C)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in service_requests %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('view_request', request_id=request.id) }}">
+                                {{ request.id }}
+                            </a>
+                        </td>
+                        <td>{{ request.service_professional_ref.name if request.service_professional_ref else 'Unassigned' }}</td>
+                        <td>{{ request.date_of_request }}</td>
+                        <td>{{ request.status }}</td>
+                        <td>
+                            {% if request.status != 'closed' %}
+                            <form method="POST" action="{{ url_for('close_request', request_id=request.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-success">Close</button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted">Closed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
+
 {% endblock %}

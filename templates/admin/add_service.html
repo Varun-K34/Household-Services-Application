@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Service{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Add New Service</h2>
+    <form method="POST" action="{{ url_for('add_service') }}">
+        <!-- Service Name -->
+        <div class="mb-3">
+            <label for="name" class="form-label">Service Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Enter service name" required>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter service description" required></textarea>
+        </div>
+
+        <!-- Base Price -->
+        <div class="mb-3">
+            <label for="price" class="form-label">Base Price</label>
+            <input type="number" class="form-control" id="price" name="price" placeholder="Enter base price" step="0.01" min="0" required>
+        </div>
+
+        <!-- Submit and Cancel Buttons -->
+        <button type="submit" class="btn btn-primary">Add Service</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+/* CSS for flash message popup */
+.alert-container {
+    position: fixed;
+    bottom: 30px; /* Position the container 30px from the bottom */
+    left: 50%; /* Center the container horizontally */
+    transform: translateX(-50%); /* Adjust positioning to truly center it */
+    z-index: 1050; /* Ensure the alert appears on top of other content */
+    width: auto;
+    max-width: 500px; /* Set a max width to avoid stretching */
+    padding: 10px;
+}
+
+.alert {
+    margin-bottom: 10px; /* Add some space between multiple alerts */
+    border-radius: 5px; /* Rounded corners for the alert box */
+}

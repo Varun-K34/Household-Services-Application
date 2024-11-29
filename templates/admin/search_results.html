@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+
+<h3>Search Results</h3>
+
+<p>Results for "{{ request.args.get('search_text', '') }}"</p>
+
+<!-- Display Search Results -->
+{% if results %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name/Service</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.id }}</td>
+                <td>{{ result.name }}</td>
+                <td>{{ result.type }}</td>
+                <td>
+                    <a href="{{ url_for('view_' ~ result.type, id=result.id) }}" class="btn btn-info">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No results found.</p>
+{% endif %}
+
+{% endblock %}
