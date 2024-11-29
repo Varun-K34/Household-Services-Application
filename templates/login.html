@@ -1,0 +1,27 @@
+
+
+
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+    <h2 class="text-center">A to Z Household Services</h2>
+    <form method="POST" action="/login" class="mt-4">
+        <div class="mb-3">
+            <label for="email" class="form-label">Registered Email ID</label>
+            <input type="email" name="email" class="form-control" id="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+    <div class="mt-3 text-center">
+        <a href="/register/customer">Create Account?</a> | 
+        <a href="/register/professional">Register as Professional</a>
+    </div>
+</div>
+{% endblock %}

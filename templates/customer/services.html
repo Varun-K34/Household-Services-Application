@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Available Services{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+    <h2 class="text-center">Available Services</h2>
+    <div class="row">
+        {% for service in services %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ service.name }}</h5>
+                    <p class="card-text">{{ service.description }}</p>
+                    <a href="{{ url_for('service_request', service_id=service.id) }}" class="btn btn-primary">Request Service</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

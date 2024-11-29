@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Dashboard{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+    <h2 class="text-center">Welcome to Your Dashboard</h2>
+
+    <h3 class="mt-4">Your Service Requests</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Service Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in service_requests %}
+            <tr>
+                <td>{{ request.service.name }}</td>
+                <td>{{ request.description }}</td>
+                <td>{{ request.status }}</td>
+                <td>
+                    {% if request.status == 'Pending' %}
+                    <form method="POST" action="{{ url_for('cancel_request', request_id=request.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

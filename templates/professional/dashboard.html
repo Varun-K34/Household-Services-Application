@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Professional Dashboard{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+    <h2 class="text-center">Your Pending Requests</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Service Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in pending_requests %}
+            <tr>
+                <td>{{ request.service.name }}</td>
+                <td>{{ request.description }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('accept_request', request_id=request.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-success">Accept</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('complete_request', request_id=request.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-primary">Complete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

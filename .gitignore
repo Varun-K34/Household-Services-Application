@@ -1,0 +1,10 @@
+# Ignore the instance folder
+instance/
+
+# Ignore the .env file
+.env
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo

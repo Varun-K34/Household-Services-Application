@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Signup{% endblock %}
+
+{% block content %}
+<div class="mt-5">
+    <h2 class="text-center">Customer Signup</h2>
+    <form method="POST" action="/register/customer" class="mt-4">
+        <div class="mb-3">
+            <label for="email" class="form-label">Email ID</label>
+            <input type="email" name="email" class="form-control" id="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password" required>
+        </div>
+        <div class="mb-3">
+            <label for="fullname" class="form-label">Full Name</label>
+            <input type="text" name="fullname" class="form-control" id="fullname" required>
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea name="address" class="form-control" id="address" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="pincode" class="form-label">Pin Code</label>
+            <input type="text" name="pincode" class="form-control" id="pincode" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Register</button>
+    </form>
+    <div class="mt-3 text-center">
+        <a href="/login">Login here</a>
+    </div>
+</div>
+{% endblock %}
