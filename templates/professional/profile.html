@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Profile Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Professional Profile</h3>
+        <!-- Back Button -->
+        <a href="{{ url_for('professional_dashboard') }}" class="btn btn-secondary btn-sm">Back to Dashboard</a>
+    </div>
+
+    <!-- Profile Form -->
+    <form method="POST" enctype="multipart/form-data">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <!-- Username Field -->
+                <div class="form-group mb-3">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ professional.user_ref.username }}" disabled>
+                </div>
+
+                <!-- Service Type Field -->
+                <div class="form-group mb-3">
+                    <label for="service_type">Service Type</label>
+                    <input type="text" class="form-control" id="service_type" name="service_type" value="{{ professional.service_type }}">
+                </div>
+
+                <!-- Experience Field -->
+                <div class="form-group mb-3">
+                    <label for="experience">Experience (Years)</label>
+                    <input type="number" class="form-control" id="experience" name="experience" value="{{ professional.experience }}">
+                </div>
+
+                <!-- Address Field -->
+                <div class="form-group mb-3">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="address" value="{{ professional.address }}">
+                </div>
+
+                <!-- Pin Code Field -->
+                <div class="form-group mb-3">
+                    <label for="pin_code">Pin Code</label>
+                    <input type="text" class="form-control" id="pin_code" name="pin_code" value="{{ professional.pin_code }}">
+                </div>
+
+                <!-- Description Field -->
+                <div class="form-group mb-3">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" name="description">{{ professional.description }}</textarea>
+                </div>
+
+                <!-- Resume Upload Field -->
+                <div class="form-group mb-3">
+                    <label for="resume">Upload Resume</label>
+                    <input type="file" class="form-control" id="resume" name="resume">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -43,6 +43,12 @@ def register_customer():
         if User.query.filter_by(username=username).first():
             flash('Username already exists')
             return redirect(url_for('register_customer'))
+        
+        # Check if phone number already exists
+        existing_user = User.query.filter_by(phone_number=phone_number).first()
+        if existing_user:
+            flash('Phone number is already registered!', 'danger')
+            return redirect(url_for('register_customer'))  # Redirect to the registration page with a message
 
         # Hash the password
         hashed_password = generate_password_hash(password)
@@ -105,6 +111,12 @@ def register_professional():
         if User.query.filter_by(username=username).first():
             flash('Username already exists')
             return redirect(url_for('register_professional'))
+        
+        # Check if phone number already exists
+        existing_user = User.query.filter_by(phone_number=phone_number).first()
+        if existing_user:
+            flash('Phone number is already registered!', 'danger')
+            return redirect(url_for('register_professional'))  # Redirect to the registration page with a message
 
         # Hash the password
         hashed_password = generate_password_hash(password)
@@ -466,13 +478,108 @@ def cancel_request(request_id):
 
 @app.route('/professional_dashboard')
 def professional_dashboard():
+    # Ensure user is logged in as a professional
     if 'role' not in session or session['role'] != 'professional':
         flash('Unauthorized access. You must be logged in as a professional to view this page.', 'danger')
         return redirect(url_for('login'))
 
-    # Fetch any data specific to the professional, e.g., pending service requests
-    pending_requests = ServiceRequest.query.filter_by(professional_id=session['user_id'], status='pending').all()
-    return render_template('professional/dashboard.html', pending_requests=pending_requests)
+    # Fetch the logged-in professional's ID from session
+    professional_id = session.get('user_id')
+
+    # Fetch Today's Services (Pending Requests for the logged-in professional)
+    today_requests = ServiceRequest.query.filter_by(
+        professional_id=professional_id,
+        status='requested'
+    ).order_by(ServiceRequest.date_of_request).all()
+
+    # Fetch Closed Services (Completed Requests for the logged-in professional)
+    closed_requests = ServiceRequest.query.filter_by(
+        professional_id=professional_id,
+        status='closed'
+    ).order_by(ServiceRequest.date_of_completion.desc()).all()
+
+    # Transform closed_requests into a list of dictionaries for easy rendering
+    closed_requests_list = []
+    for service, review in closed_requests:
+        closed_requests_list.append({
+            'id': service.id,
+            'customer_name': service.customer_ref.user_ref.username,
+            'customer_contact': service.customer_ref.user_ref.phone_number,
+            'customer_address': service.customer_ref.address,
+            'customer_pincode': service.customer_ref.pincode,
+            'service_request_date': service.date_of_request,
+            'rating': review.rating,
+            'remarks': review.remarks
+        })
+
+    # Render the dashboard template with fetched data
+    return render_template(
+        'professional/dashboard.html',
+        today_requests=today_requests,
+        closed_requests=closed_requests_list
+    )
+
+@app.route('/professional_profile', methods=['GET', 'POST'])
+def professional_profile():
+    # Authorization check
+    if 'role' not in session or session['role'] != 'professional':
+        flash('Unauthorized access. You must be logged in as a professional to view this page.', 'danger')
+        return redirect(url_for('login'))
+
+    # Fetch the professional's details
+    professional = ServiceProfessional.query.filter_by(user_id=session['user_id']).first()
+
+    if request.method == 'POST':
+        # Update profile data
+        professional.service_type = request.form.get('service_type')
+        professional.experience = request.form.get('experience')
+        professional.address = request.form.get('address')
+        professional.pin_code = request.form.get('pin_code')
+        professional.description = request.form.get('description')
+
+        # Handle resume file upload
+        resume_file = request.files.get('resume')
+        if resume_file:
+            filename = secure_filename(resume_file.filename)
+            resume_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            resume_file.save(resume_path)
+            professional.resume_filename = filename
+
+        # Save changes
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('professional_profile'))
+
+    return render_template('professional/profile.html', professional=professional)
+
+
+@app.route('/professional/search', methods=['GET', 'POST'])
+def professional_search():
+    search_results = []
+    search_text = ''
+    search_type = None
+
+    if request.method == 'POST':
+        search_text = request.form.get('search_text', '').strip()
+        search_type = request.form.get('search_type')
+
+        # Search by ServiceRequest id for today services
+        if search_type == 'today_services' and search_text:
+            search_results = ServiceRequest.query.filter(
+                ServiceRequest.id == search_text  # Searching by the ServiceRequest ID directly
+            ).all()
+
+        # You can add additional filters for closed services or other types of searches
+        elif search_type == 'closed_services' and search_text:
+            search_results = ServiceRequest.query.filter(
+                ServiceRequest.id == search_text  # Searching by the ServiceRequest ID directly
+            ).all()
+
+    return render_template('professional/search.html', 
+                           search_results=search_results, 
+                           search_type=search_type, 
+                           search_text=search_text)
+
 
 
 @app.route('/requests')

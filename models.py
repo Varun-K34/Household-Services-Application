@@ -1,9 +1,8 @@
-from app import app
-from flask_sqlalchemy import SQLAlchemy
+from app import app , db
 from werkzeug.security import generate_password_hash
 import datetime
 
-db = SQLAlchemy(app)
+
 
 # User Model
 class User(db.Model):
@@ -18,8 +17,8 @@ class User(db.Model):
     
 
     # One-to-One relationships
-    customer_ref = db.relationship('Customer', back_populates='user_ref', uselist=False)
-    service_professional_ref = db.relationship('ServiceProfessional', back_populates='user_ref', uselist=False)
+    customer_ref = db.relationship('Customer', back_populates='user_ref', uselist=False, overlaps="user, customer_ref")
+    service_professional_ref = db.relationship('ServiceProfessional', back_populates='user_ref', uselist=False, overlaps="user_ref")
 
 # Admin Model
 class Admin(db.Model):
@@ -33,11 +32,11 @@ class Customer(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     address = db.Column(db.String(255), nullable=True)
     pin_code = db.Column(db.String(10), nullable=True)
-    user_ref = db.relationship('User', back_populates='customer_ref')
+    user_ref = db.relationship('User', back_populates='customer_ref',  overlaps="customer_ref,user")
 
 
-    # Relationships
-    user = db.relationship('User', backref='customer')
+    # # Relationships
+    # user = db.relationship('User', backref='customer')
     # One-to-Many relationship with ServiceRequest
     service_requests = db.relationship('ServiceRequest', back_populates='customer_ref')
 
@@ -87,7 +86,7 @@ class ServiceRequest(db.Model):
     date_of_request = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     date_of_completion = db.Column(db.DateTime, nullable=True)
     status = db.Column(db.String(50), default='requested')      # requested/accepted/closed
-    remarks = db.Column(db.String(255), nullable=True)
+    
 
     # Relationships
     service_ref = db.relationship('Service', back_populates='service_requests')
@@ -117,10 +116,46 @@ class Review(db.Model):
     service_request_id = db.Column(db.Integer, db.ForeignKey('service_request.id'), nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     rating = db.Column(db.Integer, nullable=False)  # Rating out of 5
-    comment = db.Column(db.String(255), nullable=True)
+    remarks = db.Column(db.String(255), nullable=True)  # Customer's remarks, after service completion
 
     service_request_ref = db.relationship('ServiceRequest', backref='reviews')
     customer_ref = db.relationship('Customer', backref='reviews')
+
+    # Properties to fetch service details
+    @property
+    def service_name(self):
+        return self.service_request_ref.service_ref.name if self.service_request_ref and self.service_request_ref.service_ref else None
+
+    @property
+    def service_description(self):
+        return self.service_request_ref.service_ref.description if self.service_request_ref and self.service_request_ref.service_ref else None
+
+    @property
+    def service_request_date(self):
+        return self.service_request_ref.date_of_request if self.service_request_ref else None
+
+    @property
+    def professional_id(self):
+        return self.service_request_ref.professional_id if self.service_request_ref else None
+
+    @property
+    def service_request_status(self):
+        return self.service_request_ref.status if self.service_request_ref else None
+
+    @property
+    def professional_name(self):
+        return self.service_request_ref.service_professional_ref.name if self.service_request_ref and self.service_request_ref.service_professional_ref else None
+
+    @property
+    def professional_phone_number(self):
+        return self.service_request_ref.service_professional_ref.user_ref.phone_number if self.service_request_ref and self.service_request_ref.service_professional_ref else None
+
+    # Property to get the customer name
+    @property
+    def customer_name(self):
+        return self.customer_ref.user_ref.username if self.customer_ref and self.customer_ref.user_ref else None
+
+
 
 # Admin Initialization
 def create_admin():

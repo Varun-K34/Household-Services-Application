@@ -1,34 +1,112 @@
 {% extends "base.html" %}
 
-{% block title %}Professional Dashboard{% endblock %}
-
 {% block content %}
-<div class="mt-5">
-    <h2 class="text-center">Your Pending Requests</h2>
-    <table class="table table-bordered">
+<div class="container mt-4">
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Welcome To Professional </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto"> <!-- This class aligns the nav items to the right -->
+                    <!-- Home Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('professional_dashboard') }}">Home</a>
+                    </li>
+                    <!-- Search Button -->
+                    <li class="nav-item">
+                        <form class="d-flex" method="GET" action="{{ url_for('professional_search') }}">
+                            <button class="nav-link btn btn-link" type="submit">Search</button>
+                        </form>
+                    </li>
+                    <!-- Summary Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('professional_dashboard') }}">Summary</a>
+                    </li>
+                    <!-- Profile Button -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('professional_profile') }}" class="nav-link btn btn-link">Profile</a>
+                    </li>
+                    <!-- Logout Button -->
+                    <li class="nav-item">
+                        <a href="{{ url_for('logout') }}" class="nav-link text-danger">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Today Services Section -->
+    <div class="mt-4">
+        <h3>Today Services</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer Name</th>
+                    <th>Contact Phone</th>
+                    <th>Location (With Pincode)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in today_services %}
+                <tr>
+                    <td>{{ service.id }}</td>
+                    <td>{{ service.customer_name }}</td>
+                    <td>{{ service.customer_contact }}</td>
+                    <td>{{ service.customer_address }} ({{ service.customer_pincode }})</td>
+                    <td>
+                        {% if service.status == 'requested' %}
+                        <a href="{{ url_for('accept_service', service_id=service.id) }}" class="btn btn-success btn-sm">Accept</a>
+                        <a href="{{ url_for('reject_service', service_id=service.id) }}" class="btn btn-danger btn-sm">Reject</a>
+                        {% else %}
+                        <span class="badge badge-secondary">{{ service.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">No services for today.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Closed Services Section -->
+<div class="mt-4">
+    <h3>Closed Services</h3>
+    <table class="table table-striped">
         <thead>
             <tr>
-                <th>Service Name</th>
-                <th>Description</th>
-                <th>Actions</th>
+                <th>ID</th>
+                <th>Customer Name</th>
+                <th>Contact Phone</th>
+                <th>Location (With Pincode)</th>
+                <th>Date of Request</th>
+                <th>Rating</th>
+                <th>Review</th>
             </tr>
         </thead>
         <tbody>
-            {% for request in pending_requests %}
+            {% for service in closed_services %}
             <tr>
-                <td>{{ request.service.name }}</td>
-                <td>{{ request.description }}</td>
-                <td>
-                    <form method="POST" action="{{ url_for('accept_request', request_id=request.id) }}" style="display:inline;">
-                        <button type="submit" class="btn btn-success">Accept</button>
-                    </form>
-                    <form method="POST" action="{{ url_for('complete_request', request_id=request.id) }}" style="display:inline;">
-                        <button type="submit" class="btn btn-primary">Complete</button>
-                    </form>
-                </td>
+                <td>{{ service.id }}</td>
+                <td>{{ service.customer_name }}</td>
+                <td>{{ service.customer_contact }}</td>
+                <td>{{ service.customer_address }} ({{ service.customer_pincode }})</td>
+                <td>{{ service.service_request_date }}</td>
+                <td>{{ service.rating }}</td>
+                <td>{{ service.remarks }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center">No closed services.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
 {% endblock %}
